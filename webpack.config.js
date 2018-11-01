@@ -1,9 +1,11 @@
 const path = require("path");
+const glob = require('glob')
+
 const webpack = require("webpack");
 const HtmlwebpackPlugin = require("html-webpack-plugin");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 //css tree shaking
-// const PurifyCSSPlugin = require("purifycss-webpack");
+const PurifyCSSPlugin = require("purifycss-webpack");
 
 const ROOT_PATH = path.resolve(__dirname);
 const SRC_PATH = path.resolve(ROOT_PATH, "src");
@@ -12,6 +14,10 @@ const BUILD_PATH = path.resolve(ROOT_PATH, "dist");
 
 let mode = 'production';
 let plugins = [
+  // css 
+  new PurifyCSSPlugin({
+    paths: glob.sync(path.join(SRC_PATH, 'pages/*/*.html'))
+  }),
   new webpack.ProvidePlugin({
     "React": "react"
   }),
@@ -99,6 +105,25 @@ module.exports = {
       //   include: SRC_PATH,
       //   enforce: "pre"
       // },
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: "style-loader"
+          },
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+              modules: true,
+              localIdentName: "[local]_[hash:base64:5]"
+            }
+          },
+          {
+            loader: "less-loader"
+          }
+        ]
+      },
       {
         test: /\.jsx?$/,
         use: [
