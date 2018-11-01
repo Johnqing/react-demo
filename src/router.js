@@ -1,19 +1,44 @@
 import React, { Component } from 'react';
 import { Switch, Route, HashRouter as Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
-import Index from './pages/index/'
-import Test from './pages/test/'
+import Bundle from './public/components/bundle'
+import stores from './redux/'
 
-function routers(){
+// 路由配置表
+const routerConfig = [
+  {
+    path: '/',
+    exact: true,
+    component(props) {
+      return <Bundle {...props} load={() => import('./pages/index/')} />;
+    }
+  },
+
+  {
+    path: '/test',
+    component(props) {
+      return <Bundle {...props} load={() => import('./pages/test/')} />;
+    }
+  }
+];
+
+/**
+ * 路由生成
+ * @param {Object} store  
+ */
+const Root = ({store}) => {
+  const routerTags = routerConfig.map((item, index) => <Route key={index} exact={item.exact} path={item.path} component={item.component} />);
+
   return (
-    <Router>
-      <div>
-        <Route key="/" exact path="/" component={Index} />
-        <Route key="/a" exact path="/a" component={Test} />
-      </div>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <div>
+          {routerTags}
+        </div>
+      </Router>
+    </Provider>
   )
 }
 
-
-export default routers()
+export default Root(stores());

@@ -9,8 +9,64 @@ const ROOT_PATH = path.resolve(__dirname);
 const SRC_PATH = path.resolve(ROOT_PATH, "src");
 const INDEX_PATH = path.resolve(SRC_PATH);
 const BUILD_PATH = path.resolve(ROOT_PATH, "dist");
+
+let mode = 'production';
+let plugins = [
+  new webpack.ProvidePlugin({
+    "React": "react"
+  }),
+  new webpack.LoaderOptionsPlugin({
+    options: {}
+  }),
+  new HtmlwebpackPlugin({
+    title: "react-webpack-demo",
+    filename: "index.html",
+    template: path.resolve(SRC_PATH, "templates", "index.html"),
+    minify: {
+      removeComments: true,
+      collapseWhitespace: true,
+      removeRedundantAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      removeAttributeQuotes: true
+    }
+  })
+];
+
+// 不同环境对应不同的配置
+if(process.env.NODE_ENV === 'development'){
+  mode = 'development';
+  plugins.unshift(new webpack.DefinePlugin({
+    "process.env.NODE_ENV": '"development"'
+  }))
+} else {
+  plugins.push(
+    new UglifyJSPlugin({
+      uglifyOptions: {
+        // warning: "verbose",
+        warning: false,
+        ecma: 7,
+        beautify: false,
+        compress: false,
+        comments: false,
+        mangle: false,
+        toplevel: false,
+        keep_classnames: true,
+        keep_fnames: true,
+        // 删除console.log
+        drop_console: true,
+        // 内嵌只用了一次的变量
+        collapse_vars: true,
+        // 提取出出现多次但是没有定义成变量去引用的静态值
+        reduce_vars: true
+      }
+    })
+  )
+}
+
+// 共有配置
 module.exports = {
-  mode: "development",
+  mode: mode,
   entry: {
     index: path.resolve(INDEX_PATH, "index.js")
   },
@@ -33,16 +89,16 @@ module.exports = {
   },
   module: {
     rules: [
-    //   {
-    //     test: /\.jsx?$/,
-    //     use: [
-    //       {
-    //         loader: "eslint-loader"
-    //       }
-    //     ],
-    //     include: SRC_PATH,
-    //     enforce: "pre"
-    //   },
+      // {
+      //   test: /\.jsx?$/,
+      //   use: [
+      //     {
+      //       loader: "eslint-loader"
+      //     }
+      //   ],
+      //   include: SRC_PATH,
+      //   enforce: "pre"
+      // },
       {
         test: /\.jsx?$/,
         use: [
@@ -69,52 +125,5 @@ module.exports = {
     }
   },
   // 配置plugin
-  plugins: [
-    new webpack.DefinePlugin({
-      "process.env.NODE_ENV": '"development"'
-    }),
-    new webpack.ProvidePlugin({
-      "React": "react"
-    }),
-    new webpack.LoaderOptionsPlugin({
-      options: {}
-    }),
-    // new PurifyCSSPlugin({
-    //   // 路劲扫描 nodejs内置 路劲检查
-    //   paths: glob.sync(path.join(__dirname, "pages/*/*.html"))
-    // }),
-    // new UglifyJSPlugin({
-    //   uglifyOptions: {
-    //     // warning: "verbose",
-    //     warning: false,
-    //     ecma: 7,
-    //     beautify: false,
-    //     compress: false,
-    //     comments: false,
-    //     mangle: false,
-    //     toplevel: false,
-    //     keep_classnames: true,
-    //     keep_fnames: true,
-    //     // 删除console.log
-    //     drop_console: true,
-    //     // 内嵌只用了一次的变量
-    //     collapse_vars: true,
-    //     // 提取出出现多次但是没有定义成变量去引用的静态值
-    //     reduce_vars: true
-    //   }
-    // }),
-    new HtmlwebpackPlugin({
-      title: "react-webpack-demo",
-      filename: "index.html",
-      template: path.resolve(SRC_PATH, "templates", "index.html"),
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeRedundantAttributes: true,
-        removeScriptTypeAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        removeAttributeQuotes: true
-      }
-    })
-  ]
+  plugins: plugins
 };
