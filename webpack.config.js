@@ -16,7 +16,7 @@ let mode = 'production';
 let plugins = [
   // css 
   new PurifyCSSPlugin({
-    paths: glob.sync(path.join(SRC_PATH, 'pages/*/*.html'))
+    paths: glob.sync(path.join(SRC_PATH, '*/*/*.html'))
   }),
   new webpack.ProvidePlugin({
     "React": "react"

@@ -1,6 +1,6 @@
 import style from './index.less';
 import React, { Component } from 'react';
-import Dialog from '../../public/components/modal/modal';
+import Dialog from '../../public/components/modal/';
 
 export default class Index extends Component{
   handle(){
