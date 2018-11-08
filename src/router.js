@@ -41,4 +41,6 @@ const Root = ({store}) => {
   )
 }
 
-export default Root(stores());
+export default Root(stores({
+  10: 1
+}));

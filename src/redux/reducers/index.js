@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
 import user from './user';
-// import visibilityFilter from './visibilityFilter';
+import wrapAuth from './wrapAuth';
 
 const reducer = combineReducers({
-    user
+    user,
+    wrapAuth
 });
 
 export default reducer;
